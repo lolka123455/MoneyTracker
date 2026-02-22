@@ -19,6 +19,10 @@ migrate_working_dir/
 # VS Code
 .vscode/
 
+# Flutter tool generated
+.flutter-plugins
+.flutter-plugins-dependencies
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/App.framework
@@ -74,8 +78,10 @@ GoogleService-Info.plist
 /android/gradlew.bat
 /android/local.properties
 /android/GeneratedPluginRegistrant.java
+/android/app/src/main/java/io/flutter/plugins/
 /ios/.symlinks/
 /ios/Pods/
+/macos/Flutter/ephemeral/
 /macos/Flutter/GeneratedPluginRegistrant.swift
 /macos/Pods/
 
