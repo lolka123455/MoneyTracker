@@ -42,6 +42,17 @@ jobs:
           sed -i 's/compileSdk[= ].*/compileSdk = 34/' android/app/build.gradle
           # minSdk 23 — required by firebase-auth 23.x
           sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle
+          # Force compileSdk 34 on ALL subprojects (plugins use 35 which fails on runner)
+          cat >> android/build.gradle << 'BEOF'
+
+          subprojects {
+              afterEvaluate { project ->
+                  if (project.hasProperty('android')) {
+                      project.android.compileSdk = 34
+                  }
+              }
+          }
+          BEOF
 
       - name: Create placeholder google-services.json
         run: |
