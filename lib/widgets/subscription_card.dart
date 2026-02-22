@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../database/database.dart';
-import '../core/constants.dart';
 
 class SubscriptionCard extends StatelessWidget {
   final Subscription subscription;

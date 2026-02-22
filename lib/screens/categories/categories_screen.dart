@@ -30,8 +30,6 @@ class _CategoriesScreenState
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories & Payment Methods'),
@@ -184,7 +182,6 @@ class _CategoriesScreenState
 class _CategoriesTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final categories = ref.watch(categoriesProvider);
 
     return categories.when(

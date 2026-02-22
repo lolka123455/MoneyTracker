@@ -17,7 +17,6 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final user = ref.watch(authStateProvider).valueOrNull;
     final tBankStatus = ref.watch(tBankConnectionStatusProvider);
     final usdRate = ref.watch(usdToRubRateProvider);

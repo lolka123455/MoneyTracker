@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import '../../database/database.dart';
 import '../../providers/subscription_provider.dart';
 import '../../providers/category_provider.dart';
 import '../../providers/payment_method_provider.dart';
@@ -115,7 +114,6 @@ class _AddEditSubscriptionScreenState
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final categories = ref.watch(categoriesProvider);
     final paymentMethods = ref.watch(paymentMethodsProvider);
 
