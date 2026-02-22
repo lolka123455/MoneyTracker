@@ -38,6 +38,8 @@ jobs:
           # Kotlin 2.0.0 — required by shared_preferences_android >=2.4
           sed -i 's/org.jetbrains.kotlin.android" version "[^"]*"/org.jetbrains.kotlin.android" version "2.0.0"/' android/settings.gradle
           sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '2.0.0'/" android/build.gradle
+          # compileSdk 34 — android-35 on runner has corrupted aapt2 resources
+          sed -i 's/compileSdk[= ].*/compileSdk = 34/' android/app/build.gradle
           # minSdk 23 — required by firebase-auth 23.x
           sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle
 
