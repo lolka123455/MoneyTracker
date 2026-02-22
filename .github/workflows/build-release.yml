@@ -32,8 +32,14 @@ jobs:
           flutter create --project-name money_tracker --org com.example .
           git checkout -- lib/ pubspec.yaml analysis_options.yaml
 
-      - name: Fix compileSdk for sqlite3_flutter_libs
-        run: sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/' android/app/build.gradle.kts 2>/dev/null || sed -i 's/compileSdk.*/compileSdk = 35/' android/app/build.gradle 2>/dev/null || true
+      - name: Fix Android build config
+        run: |
+          # Bump Kotlin to 2.0.0 for shared_preferences_android compatibility
+          find android/ -name "*.gradle" -o -name "*.gradle.kts" | xargs sed -i 's/org.jetbrains.kotlin.android" version "[^"]*"/org.jetbrains.kotlin.android" version "2.0.0"/' 2>/dev/null || true
+          find android/ -name "*.gradle" | xargs sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '2.0.0'/" 2>/dev/null || true
+          # Bump compileSdk to 35 for sqlite3_flutter_libs
+          find android/ -name "*.gradle.kts" | xargs sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/' 2>/dev/null || true
+          find android/ -name "*.gradle" | xargs sed -i 's/compileSdk.*/compileSdk = 35/' 2>/dev/null || true
 
       - name: Install dependencies
         run: flutter pub get
@@ -70,6 +76,9 @@ jobs:
           rm -rf macos/
           flutter create --project-name money_tracker --org com.example --platforms macos .
           git checkout -- lib/ pubspec.yaml analysis_options.yaml
+
+      - name: Fix macOS deployment target
+        run: sed -i '' 's/platform :osx.*/platform :osx, '\''10.15'\''/' macos/Podfile
 
       - name: Install dependencies
         run: flutter pub get
