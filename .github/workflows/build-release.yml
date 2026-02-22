@@ -23,7 +23,6 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
           channel: stable
           cache: true
 
@@ -33,15 +32,8 @@ jobs:
           flutter create --project-name money_tracker --org com.example .
           git checkout -- lib/ pubspec.yaml analysis_options.yaml
 
-      - name: Install Android SDK 35
-        run: |
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
-
       - name: Fix Android build config
         run: |
-          # Kotlin 2.0.0 — required by shared_preferences_android >=2.4
-          sed -i 's/org.jetbrains.kotlin.android" version "[^"]*"/org.jetbrains.kotlin.android" version "2.0.0"/' android/settings.gradle
-          sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '2.0.0'/" android/build.gradle
           # minSdk 23 — required by firebase-auth 23.x
           sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle
 
@@ -91,7 +83,6 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
           channel: stable
           cache: true
 
