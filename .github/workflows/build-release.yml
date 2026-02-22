@@ -40,6 +40,8 @@ jobs:
           sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '2.0.0'/" android/build.gradle
           # compileSdk 35 — required by sqlite3_flutter_libs
           sed -i 's/compileSdk[= ].*/compileSdk = 35/' android/app/build.gradle
+          # minSdk 23 — required by firebase-auth 23.x
+          sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle
 
       - name: Create placeholder google-services.json
         run: |
