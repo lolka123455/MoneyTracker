@@ -28,8 +28,12 @@ jobs:
 
       - name: Regenerate platform scaffolding
         run: |
+          rm -rf android/ ios/ linux/ windows/ web/ macos/
           flutter create --project-name money_tracker --org com.example .
           git checkout -- lib/ pubspec.yaml analysis_options.yaml
+
+      - name: Fix compileSdk for sqlite3_flutter_libs
+        run: sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/' android/app/build.gradle.kts 2>/dev/null || sed -i 's/compileSdk.*/compileSdk = 35/' android/app/build.gradle 2>/dev/null || true
 
       - name: Install dependencies
         run: flutter pub get
@@ -63,6 +67,7 @@ jobs:
 
       - name: Regenerate platform scaffolding
         run: |
+          rm -rf macos/
           flutter create --project-name money_tracker --org com.example --platforms macos .
           git checkout -- lib/ pubspec.yaml analysis_options.yaml
 
