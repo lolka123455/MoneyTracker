@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../providers/statistics_provider.dart';
-import '../../providers/scope_provider.dart';
 import '../../providers/category_provider.dart';
 import '../../providers/tbank_provider.dart';
 
@@ -12,8 +11,6 @@ class StatisticsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -540,7 +537,6 @@ class _AnalyticsTile extends StatelessWidget {
 class _ScopeSummary extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final remaining = ref.watch(currentScopeRemainingProvider);
     final spending = ref.watch(currentScopeSpendingProvider);
     final subsCost = ref.watch(totalSubscriptionsCostProvider);
