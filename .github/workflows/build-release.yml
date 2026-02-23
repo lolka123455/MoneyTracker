@@ -34,13 +34,13 @@ jobs:
 
       - name: Fix Android build config
         run: |
+          BUILD_FILE=android/app/build.gradle
+          [ -f android/app/build.gradle.kts ] && BUILD_FILE=android/app/build.gradle.kts
           # minSdk 23 — required by firebase-auth 23.x
-          # Handle both Groovy (.gradle) and Kotlin DSL (.gradle.kts)
-          if [ -f android/app/build.gradle.kts ]; then
-            sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle.kts
-          elif [ -f android/app/build.gradle ]; then
-            sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle
-          fi
+          sed -i 's/minSdk[= ].*/minSdk = 23/' "$BUILD_FILE"
+          # Enable core library desugaring — required by flutter_local_notifications
+          echo 'android.compileOptions.isCoreLibraryDesugaringEnabled = true' >> "$BUILD_FILE"
+          echo 'dependencies { add("coreLibraryDesugaring", "com.android.tools:desugar_jdk_libs:2.1.4") }' >> "$BUILD_FILE"
 
       - name: Create placeholder google-services.json
         run: |
