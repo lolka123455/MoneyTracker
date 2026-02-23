@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -22,7 +23,6 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
           channel: stable
           cache: true
 
@@ -32,8 +32,38 @@ jobs:
           flutter create --project-name money_tracker --org com.example .
           git checkout -- lib/ pubspec.yaml analysis_options.yaml
 
-      - name: Fix compileSdk for sqlite3_flutter_libs
-        run: sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/' android/app/build.gradle.kts 2>/dev/null || sed -i 's/compileSdk.*/compileSdk = 35/' android/app/build.gradle 2>/dev/null || true
+      - name: Fix Android build config
+        run: |
+          BUILD_FILE=android/app/build.gradle
+          [ -f android/app/build.gradle.kts ] && BUILD_FILE=android/app/build.gradle.kts
+          # minSdk 23 — required by firebase-auth 23.x
+          sed -i 's/minSdk[= ].*/minSdk = 23/' "$BUILD_FILE"
+          # Enable core library desugaring — required by flutter_local_notifications
+          echo 'android.compileOptions.isCoreLibraryDesugaringEnabled = true' >> "$BUILD_FILE"
+          echo 'dependencies { add("coreLibraryDesugaring", "com.android.tools:desugar_jdk_libs:2.1.4") }' >> "$BUILD_FILE"
+
+      - name: Create placeholder google-services.json
+        run: |
+          cat > android/app/google-services.json << 'GSEOF'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "firebase_url": "https://placeholder.firebaseio.com",
+              "project_id": "placeholder",
+              "storage_bucket": "placeholder.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": { "package_name": "com.example.money_tracker" }
+              },
+              "oauth_client": [],
+              "api_key": [{ "current_key": "AIzaSyPlaceholder" }],
+              "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+            }],
+            "configuration_version": "1"
+          }
+          GSEOF
 
       - name: Install dependencies
         run: flutter pub get
@@ -58,7 +88,6 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
           channel: stable
           cache: true
 
@@ -70,6 +99,34 @@ jobs:
           rm -rf macos/
           flutter create --project-name money_tracker --org com.example --platforms macos .
           git checkout -- lib/ pubspec.yaml analysis_options.yaml
+
+      - name: Fix macOS deployment target
+        run: |
+          sed -i '' 's/platform :osx.*/platform :osx, '\''10.15'\''/' macos/Podfile
+          sed -i '' 's/MACOSX_DEPLOYMENT_TARGET = .*/MACOSX_DEPLOYMENT_TARGET = 10.15;/' macos/Runner.xcodeproj/project.pbxproj
+
+      - name: Create placeholder GoogleService-Info.plist
+        run: |
+          cat > macos/Runner/GoogleService-Info.plist << 'PEOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>API_KEY</key><string>placeholder</string>
+            <key>GCM_SENDER_ID</key><string>000000000000</string>
+            <key>PLIST_VERSION</key><string>1</string>
+            <key>BUNDLE_ID</key><string>com.example.moneyTracker</string>
+            <key>PROJECT_ID</key><string>placeholder</string>
+            <key>STORAGE_BUCKET</key><string>placeholder.appspot.com</string>
+            <key>IS_ADS_ENABLED</key><false/>
+            <key>IS_ANALYTICS_ENABLED</key><false/>
+            <key>IS_APPINVITE_ENABLED</key><true/>
+            <key>IS_GCM_ENABLED</key><true/>
+            <key>IS_SIGNIN_ENABLED</key><true/>
+            <key>GOOGLE_APP_ID</key><string>1:000000000000:macos:0000000000000000</string>
+          </dict>
+          </plist>
+          PEOF
 
       - name: Install dependencies
         run: flutter pub get
@@ -101,6 +158,7 @@ jobs:
     name: Create GitHub Release
     needs: [build-android, build-macos]
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - uses: actions/checkout@v4
 

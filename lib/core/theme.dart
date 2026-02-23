@@ -15,7 +15,7 @@ class AppTheme {
       backgroundColor: Color(0xFF0E0E12),
       surfaceTintColor: Colors.transparent,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: const Color(0xFF1C1C24),
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -64,7 +64,7 @@ class AppTheme {
         borderRadius: BorderRadius.circular(16),
       ),
     ),
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: const Color(0xFF1C1C24),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
