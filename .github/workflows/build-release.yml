@@ -35,7 +35,12 @@ jobs:
       - name: Fix Android build config
         run: |
           # minSdk 23 — required by firebase-auth 23.x
-          sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle
+          # Handle both Groovy (.gradle) and Kotlin DSL (.gradle.kts)
+          if [ -f android/app/build.gradle.kts ]; then
+            sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle.kts
+          elif [ -f android/app/build.gradle ]; then
+            sed -i 's/minSdk[= ].*/minSdk = 23/' android/app/build.gradle
+          fi
 
       - name: Create placeholder google-services.json
         run: |
